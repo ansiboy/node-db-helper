@@ -1,0 +1,28 @@
+{
+  "name": "maishu-mysql-helper",
+  "version": "1.0.8",
+  "description": "基于 nodejs，操作 mysql 数据库的帮助类",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ansiboy/node-db-helper.git"
+  },
+  "author": "mai.shu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ansiboy/node-db-helper/issues"
+  },
+  "homepage": "https://github.com/ansiboy/node-db-helper#readme",
+  "dependencies": {
+    "json5": "^2.1.0",
+    "mysql": "^2.16.0"
+  },
+  "devDependencies": {
+    "@types/json5": "0.0.30",
+    "@types/node": "^10.12.18"
+  }
+}
