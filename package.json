@@ -19,6 +19,7 @@
   "homepage": "https://github.com/ansiboy/node-db-helper#readme",
   "dependencies": {
     "json5": "^2.1.0",
+    "mocha": "^5.2.0",
     "mysql": "^2.16.0"
   },
   "devDependencies": {

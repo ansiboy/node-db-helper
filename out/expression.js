@@ -23,6 +23,7 @@ let TokenIds = {
     LessGreater: "LessGreater",
     LessThan: "LessThan",
     LessThanEqual: "LessThanEqual",
+    /** 符号：- */
     Minus: "Minus",
     RealLiteral: "RealLiteral",
     OpenBracket: "OpenBracket",
@@ -48,7 +49,8 @@ const KeyWords = {
     like: 'like',
     desc: 'desc',
     asc: 'asc',
-    is: 'is'
+    is: 'is',
+    not: 'not',
 };
 class Errors {
     static argumentNull(name) {
@@ -184,7 +186,10 @@ exports.MethodCallExpression = MethodCallExpression;
 class UnaryExpression extends Expression {
     constructor(op, expr) {
         super(ExpressionTypes.Unary);
-        this.text = `${op}${expr.toString()}`;
+        if (op == '-')
+            this.text = `${op}${expr.toString()}`;
+        else
+            this.text = `${op} ${expr.toString()}`;
     }
     toString() {
         return this.text;
@@ -420,16 +425,31 @@ class Parser {
                     do {
                         this.nextChar();
                     } while (this.isDigit(this.ch));
-                    break;
-                }
-                if (this.ch == '.') {
-                    t = TokenIds.RealLiteral;
-                    this.nextChar();
-                    do {
+                    if (this.ch == '.') {
+                        t = TokenIds.RealLiteral;
                         this.nextChar();
-                    } while (this.isDigit(this.ch));
+                        this.validateDigit();
+                        do {
+                            this.nextChar();
+                        } while (this.isDigit(this.ch));
+                    }
                     break;
                 }
+                // if (this.isDigit(this.ch)) {
+                //     t = TokenIds.IntegerLiteral;
+                //     do {
+                //         this.nextChar();
+                //     } while (this.isDigit(this.ch));
+                //     break;
+                // }
+                // if (this.ch == '.') {
+                //     t = TokenIds.RealLiteral;
+                //     this.nextChar();
+                //     do {
+                //         this.nextChar();
+                //     } while (this.isDigit(this.ch));
+                //     break;
+                // }
                 if (this.textPos == this.textLen) {
                     t = TokenIds.End;
                     break;
@@ -442,6 +462,10 @@ class Parser {
         let pos = tokenPos;
         this.token = { id, text, pos };
     }
+    validateDigit() {
+        if (!this.isDigit(this.ch))
+            throw Errors.parseError();
+    }
     parsePrimaryStart() {
         switch (this.token.id) {
             case TokenIds.Identifier:
@@ -451,7 +475,7 @@ class Parser {
             case TokenIds.IntegerLiteral:
                 return this.parseIntegerLiteral();
             case TokenIds.RealLiteral:
-                return this._parseRealLiteral();
+                return this.parseRealLiteral();
             case TokenIds.OpenParen:
                 return this.parseParenExpression();
             default:
@@ -466,6 +490,15 @@ class Parser {
     }
     parseIntegerLiteral() {
         var expr = new ConstantExpression(new Number(this.token.text));
+        this.nextToken();
+        return expr;
+    }
+    parseRealLiteral() {
+        this.validateToken(TokenIds.RealLiteral);
+        let text = this.token.text;
+        let last = text[text.length - 1];
+        let value = Number.parseFloat(text);
+        let expr = new ConstantExpression(value);
         this.nextToken();
         return expr;
     }
@@ -535,7 +568,7 @@ class Parser {
             case TokenIds.IntegerLiteral:
                 return this.parseIntegerLiteral();
             case TokenIds.RealLiteral:
-                return this._parseRealLiteral();
+                return this.parseRealLiteral();
             case TokenIds.OpenParen:
                 return this.parseParenExpression();
             default:
@@ -545,18 +578,25 @@ class Parser {
     // -, !, not unary operators
     parseUnary() {
         let tokenId = this.token.id;
-        if (tokenId == TokenIds.Minus) {
-            var op = this.token;
+        if (this.token.text == '-' || this.token.text == KeyWords.not) {
+            var op = this.token.text;
             this.nextToken();
-            if (op.id == TokenIds.Minus && (this.token.id == TokenIds.IntegerLiteral || this.token.id == TokenIds.RealLiteral)) {
-                this.token.text = '-' + this.token.text;
-                this.token.pos = op.pos;
-                return this.parsePrimary();
-            }
+            // if (op.id == TokenIds.Minus && (this.token.id == TokenIds.IntegerLiteral || this.token.id == TokenIds.RealLiteral)) {
+            //     this.token.text = '-' + this.token.text;
+            //     this.token.pos = op.pos;
+            //     return this.parsePrimary();
+            // }
             var expr = this.parseUnary();
-            if (op.id == TokenIds.Minus) {
-                expr = new UnaryExpression('-', expr);
-            }
+            // if (op.id == TokenIds.Minus) {
+            //     expr = new UnaryExpression('-', expr);
+            //     return expr
+            // }
+            // else if (this.token.text == KeyWords.not) {
+            //     expr = new UnaryExpression(this.token.text, expr)
+            //     return expr
+            // }
+            expr = new UnaryExpression(op, expr);
+            return expr;
         }
         return this.parsePrimary();
     }
@@ -626,13 +666,6 @@ class Parser {
     parseExpression() {
         var expr = this.parseLogicalOr();
         return expr;
-    }
-    _parseRealLiteral() {
-        this.validateToken(TokenIds.RealLiteral);
-        let text = this.token.text;
-        let last = text[text.length - 1];
-        let value = Number.parseFloat(text);
-        return new ConstantExpression(value);
     }
     parse() {
         this.nextToken();
