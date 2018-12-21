@@ -716,8 +716,10 @@ export class Parser {
     }
     private parseLogicalOr(): Expression {
         var left = this.parseLogicalAnd();
-        if (this.token.id == TokenIds.DoubleBar || this.token.text == 'or') {
+        if (this.token.text == '||' || this.token.text == 'or') {
             var op = this.token.text;
+            this.nextToken();
+            
             var right = this.parseLogicalAnd();
             var expr = new BinaryExpression(op, left, right);
             left = expr;
@@ -726,7 +728,7 @@ export class Parser {
     }
     private parseLogicalAnd(): Expression {
         var left = this.parseComparison();
-        if (this.token.id == TokenIds.DoubleAmphersand || this.token.id == TokenIds.Amphersand ||
+        if (this.token.text == TokenIds.DoubleAmphersand || this.token.id == TokenIds.Amphersand ||
             this.token.text == 'and') {
 
             var op = this.token.text;

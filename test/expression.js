@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { Parser } = require('../out/expression')
 
-let expr = Parser.parseExpression('a is false')
+let expr = Parser.parseExpression('true or false')
 console.log(expr)
 
 if (typeof describe != 'function')
@@ -53,7 +53,7 @@ describe('Test Parser.parseExpression function', function () {
             assert.notEqual(expr, null)
         })
 
-        str = 'col is null'
+        str = 'col is true'
         it(str, () => {
             let expr = Parser.parseExpression(str)
             assert.notEqual(expr, null)
@@ -71,7 +71,37 @@ describe('Test Parser.parseExpression function', function () {
             assert.notEqual(expr, null)
         })
 
-        str = 'col is not null'
+        str = 'type is not null'
+        it(str, () => {
+            let expr = Parser.parseExpression(str)
+            assert.notEqual(expr, null)
+        })
+
+        str = `true and false`
+        it(str, () => {
+            let expr = Parser.parseExpression(str)
+            assert.notEqual(expr, null)
+        })
+
+        str = `true and type is not null`
+        it(str, () => {
+            let expr = Parser.parseExpression(str)
+            assert.notEqual(expr, null)
+        })
+
+        str = `type is not null and type is not null`
+        it(str, () => {
+            let expr = Parser.parseExpression(str)
+            assert.notEqual(expr, null)
+        })
+
+        str = `true or false`
+        it(str, () => {
+            let expr = Parser.parseExpression(str)
+            assert.notEqual(expr, null)
+        })
+
+        str = `(type is not null) or (type is not null)`
         it(str, () => {
             let expr = Parser.parseExpression(str)
             assert.notEqual(expr, null)
