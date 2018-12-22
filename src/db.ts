@@ -1,5 +1,5 @@
 import * as mysql from 'mysql'
-import { Parser, ExpressionTypes } from './expression';
+import { Parser } from './expression';
 import errors from './errors';
 import * as path from 'path';
 import * as fs from 'fs'
@@ -146,13 +146,13 @@ export async function list<T>(conn: Connection, tableName: string, args?: Select
 
     if (args.filter) {
         let expr = Parser.parseExpression(args.filter);
-        if (expr.type != ExpressionTypes.Binary) {
+        if (expr.type != "Binary") {
             throw errors.parseFilterFail(args.filter)
         }
     }
     if (args.sortExpression) {
         let expr = Parser.parseOrderExpression(args.sortExpression);
-        if (expr.type != ExpressionTypes.Order) {
+        if (expr.type != "Order") {
             throw errors.parseSortFail(args.sortExpression)
         }
     }

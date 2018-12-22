@@ -1,6 +1,6 @@
 {
   "name": "maishu-mysql-helper",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "description": "基于 nodejs，操作 mysql 数据库的帮助类",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@types/json5": "0.0.30",
+    "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18"
   }
 }

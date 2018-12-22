@@ -123,13 +123,13 @@ function list(conn, tableName, args) {
         }, args || {});
         if (args.filter) {
             let expr = expression_1.Parser.parseExpression(args.filter);
-            if (expr.type != expression_1.ExpressionTypes.Binary) {
+            if (expr.type != "Binary") {
                 throw errors_1.default.parseFilterFail(args.filter);
             }
         }
         if (args.sortExpression) {
             let expr = expression_1.Parser.parseOrderExpression(args.sortExpression);
-            if (expr.type != expression_1.ExpressionTypes.Order) {
+            if (expr.type != "Order") {
                 throw errors_1.default.parseSortFail(args.sortExpression);
             }
         }
